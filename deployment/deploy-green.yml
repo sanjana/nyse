@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nyse-green-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nyse-app-green
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: nyse-app-green
+    spec:
+      containers:
+      - name: nyse-app-green
+        image: anjanas6/nyse:latest
+        ports:
+        - containerPort: 9090
+        resources:
+          requests:
+            cpu: 100m
+          limits:
+            cpu: 100m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nyse-app-service-green
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 9090
+  selector:
+    app: nyse-app
