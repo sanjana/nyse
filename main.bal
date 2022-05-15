@@ -26,6 +26,7 @@ type Stock record {
     int quantity;
 };
 
+# Service listen on 9090
 service / on new http:Listener(9090) {
 
     @http:ResourceConfig {
