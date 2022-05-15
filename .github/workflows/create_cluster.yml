@@ -1,11 +1,11 @@
-name: Create a Staging k8s cluster on Google Cloud Platform
+name: Create a k8s cluster on Google Cloud Platform
 
 on:
   workflow_dispatch:
 
 jobs:
   setup-cluster:
-    name: Setup a Kubernetes cluster env for staging
+    name: Setup a Kubernetes cluster env
     runs-on: ubuntu-latest
 
     permissions:
@@ -27,4 +27,4 @@ jobs:
 
     - name: Execute
       run: |
-        gcloud container clusters create nyse-stage-cluster --num-nodes=1 --zone "us-central1-a" --async
+        gcloud container clusters create nyse-cluster --num-nodes=1 --zone "us-central1-a" --async

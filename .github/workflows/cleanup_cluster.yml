@@ -1,11 +1,11 @@
-name: Delete Staging k8s cluster on Google Cloud Platform
+name: Delete k8s cluster on Google Cloud Platform
 
 on:
   workflow_dispatch:
 
 jobs:
   setup-cluster:
-    name: Delete Kubernetes cluster env for staging
+    name: Delete Kubernetes cluster env
     runs-on: ubuntu-latest
 
     permissions:
@@ -27,4 +27,4 @@ jobs:
 
     - name: Execute
       run: |
-        gcloud container clusters delete nyse-stage-cluster --zone "us-central1-a" --async --quiet
+        gcloud container clusters delete nyse-cluster --zone "us-central1-a" --async --quiet
