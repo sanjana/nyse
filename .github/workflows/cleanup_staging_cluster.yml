@@ -24,5 +24,5 @@ jobs:
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v0
-       run: |
+      run: |
         gcloud container clusters delete nyse-stage-cluster --zone "us-central1-a" --async
