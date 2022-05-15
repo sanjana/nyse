@@ -27,4 +27,4 @@ jobs:
 
     - name: Execute
       run: |
-        gcloud container clusters delete nyse-stage-cluster --zone "us-central1-a" --async
+        gcloud container clusters delete nyse-stage-cluster --zone "us-central1-a" --async --quiet
