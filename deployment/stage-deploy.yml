@@ -1,41 +1,69 @@
-apiVersion: apps/v1
-kind: Deployment
+---
+apiVersion: "v1"
+kind: "Service"
 metadata:
-  name: nyse-stage-deployment
+  labels:
+    app: "nyse_app_service"
+  name: "nyse-service"
 spec:
-  replicas: 2
+  ports:
+  - name: "port-1-nyse"
+    port: 9090
+    protocol: "TCP"
+    targetPort: 9090
+  selector:
+    app: "nyse_app_service"
+  type: "ClusterIP"
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  labels:
+    app: "nyse_app_service"
+  name: "nyse-service-deployment"
+spec:
+  replicas: 1
   selector:
     matchLabels:
-      app: nyse-app
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
-  minReadySeconds: 5
+      app: "nyse_app_service"
   template:
     metadata:
       labels:
-        app: nyse-app
+        app: "nyse_app_service"
     spec:
       containers:
-      - name: nyse-app
-        image: anjanas6/nyse:latest
+      - image: "anjanas6/nyse:latest"
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - "sleep"
+              - "15"
+        name: "nyse-service-deployment"
         ports:
         - containerPort: 9090
+          name: "port-1-nyse"
+          protocol: "TCP"
         resources:
-          requests:
-            cpu: 100m
           limits:
-            cpu: 100m
+            memory: "256Mi"
+            cpu: "500m"
+          requests:
+            memory: "100Mi"
+            cpu: "200m"
+      nodeSelector: {}
 ---
-apiVersion: v1
-kind: Service
+apiVersion: "autoscaling/v1"
+kind: "HorizontalPodAutoscaler"
 metadata:
-  name: nyse-app-service
+  labels:
+    app: "nyse_app_service"
+  name: "nyse-service"
 spec:
-  type: LoadBalancer
-  ports:
-    - port: 8080
-      targetPort: 9090
-  selector:
-    app: nyse-app
+  maxReplicas: 2
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: "apps/v1"
+    kind: "Deployment"
+    name: "nyse-service-deployment"
+  targetCPUUtilizationPercentage: 50
