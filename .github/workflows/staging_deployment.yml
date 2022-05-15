@@ -1,0 +1,68 @@
+name: Staging service deployement
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ stage ]
+
+  # Allows to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout to workspace
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_ID }}
+          password: ${{ secrets.DOCKER_HUB_PASS }}
+
+      - name: Build the Ballerina project
+        uses: ballerina-platform/ballerina-action@master
+        env:
+          CI_BUILD: true
+        with:
+          args:
+            build
+
+      - name: Push to Docker hub
+        run:  |
+          docker push anjanas6/nyse:latest
+  deploy:
+    needs: [ build ]
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+  # Authenticate via credentials JSON
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: '${{ secrets.GKE_SA_KEY }}'
+
+  # Get the GKE credentials to deploy the cluster
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0
+
+    - name: Execute
+      run: |
+        gcloud container clusters get-credentials "nyse-cluster" --zone "us-central1-a"
+
+  # Deploy image to the GKE cluster
+    - name: Deploy
+      run: |-
+        kubectl apply -f deployment/stage_deploy.yml
+        kubectl rollout status deployment/nyse-stage-deployment
+        kubectl get services -o wide
+
