@@ -21,7 +21,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_ID }}
           password: ${{ secrets.DOCKER_HUB_PASS }}
-      
+
       - name: Build the Ballerina project
         uses: ballerina-platform/ballerina-action@master
         env:
@@ -29,7 +29,7 @@ jobs:
         with:
           args:
             build
-      
+
       - name: Push to Docker hub
         run:  |
           docker push anjanas6/nyse:latest
