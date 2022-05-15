@@ -27,4 +27,4 @@ jobs:
 
     - name: Execute
       run: |
-        gcloud container clusters create nyse-cluster --num-nodes=1 --zone "us-central1-a" --async
+        gcloud container clusters create nyse-cluster --num-nodes=3 --zone "us-central1-a" --async
