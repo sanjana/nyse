@@ -27,4 +27,4 @@ jobs:
 
     - name: Execute
       run: |
-        gcloud container clusters create-auto nyse-stage-cluster --zone "us-central1-a" --async
+        gcloud container clusters create nyse-stage-cluster --num-nodes=1 --zone "us-central1-a" --async
