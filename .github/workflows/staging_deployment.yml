@@ -62,7 +62,7 @@ jobs:
   # Deploy image to the GKE cluster
     - name: Deploy
       run: |-
-        kubectl apply -f deployment/stage_deploy.yml
+        kubectl apply -f deployment/stage-deploy.yml
         kubectl rollout status deployment/nyse-stage-deployment
         kubectl get services -o wide
 
