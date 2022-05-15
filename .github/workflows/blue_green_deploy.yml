@@ -33,7 +33,6 @@ jobs:
       - name: Push to Docker hub
         run:  |
           docker push anjanas6/nyse:latest
-
   deployBlue:
     needs: [ build ]
     runs-on: ubuntu-latest
@@ -66,7 +65,6 @@ jobs:
         kubectl apply -f deployment/deploy-blue.yml
         kubectl rollout status deployment/nyse-blue-deployment
         kubectl get services -o wide
-        echo "Deployed blue version"
 
   deployGreen:
     needs: [ build, deployBlue ]
@@ -100,4 +98,3 @@ jobs:
         kubectl apply -f deployment/deploy-green.yml
         kubectl rollout status deployment/nyse-green-deployment
         kubectl get services -o wide
-        echo "Deployed green version"
